@@ -1,0 +1,86 @@
+#подключение библиотек*
+from pygame import*
+
+#написание классов
+class Tank(sprite.Sprite):
+    def __init__(self,player_image, health, armor, damage,speed,x,y):
+        super().__init__()
+        self.image = transform.scale(image.load(player_image),(80,80))
+        self.rect = self.image.get_rect()
+        self.health = health
+        self.armor = armor
+        self.damage = damage
+        self.speed = speed
+        self.rect.x = x
+        self.rect.y = y
+    
+    def update(self):
+        keys = key.get_pressed()
+        if keys[K_a] and self.rect.x>10:
+            self.rect.x -= self.speed
+
+        if keys[K_d] and self.rect.x<long_window-90:
+            self.rect.x += self.speed
+
+        if keys[K_w] and self.rect.y>10:
+            self.rect.y -= self.speed
+
+        if keys[K_s] and self.rect.y<wide_window-90:
+            self.rect.y += self.speed
+        
+        #if keys[K_SPACE]:
+
+    def reset(self):
+        main_window.blit(self.image,(self.rect.x, self.rect.y))    
+
+class Walls(sprite.Sprite):
+    def __init__(self,wall_image,wall_x,wall_y,wall_long,wall_wide):
+        super().__init__()
+        self.long = wall_long
+        self.wide = wall_wide
+        self.image = transform.scale(image.load(wall_image),(self.long,self.wide))
+        self.rect = self.image.get_rect()
+        self.rect.x = wall_x
+        self.rect.y = wall_y
+        
+        
+    def draw(self):
+        main_window.blit(self.image,(self.rect.x, self.rect.y))
+#создание игровой сцены
+long_window = 1920
+wide_window = 1080
+main_window = display.set_mode((long_window,wide_window))
+display.set_caption('Tank_mission')
+background = transform.scale(image.load('texture_scene.png'),(long_window,wide_window))
+#персонажи
+player = Tank('tankW.png',10,3,4,3,950,500)
+
+#стены
+wall1 = Walls('wall_turfH.png',1100,-20,50,750)
+wall2 = Walls('wall_stoneH.png',700,150,50,950)
+
+
+
+
+
+#игровой цикл и все что к нему относится
+game = True
+end = False
+FPS = 60
+clock = time.Clock()
+
+while game:
+    for i in event.get():
+        if i.type == QUIT:
+            game = False
+    
+    if end == False:
+        main_window.blit(background,(0,0))
+        player.update()
+        player.reset()
+        wall1.draw()
+        wall2.draw()
+
+    display.update()
+    clock.tick(FPS)
+
